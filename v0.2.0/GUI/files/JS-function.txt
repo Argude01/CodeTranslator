@@ -1,0 +1,1 @@
+function validate(){if (true){return false;}}
