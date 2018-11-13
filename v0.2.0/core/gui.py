@@ -57,7 +57,7 @@ class Traductor( QtGui.QMainWindow ):
 
     # Tool Bar
         self.toolbar = QtGui.QToolBar()
-        self.addToolBar( QtCore.Qt.RightToolBarArea, self.toolbar )
+        self.addToolBar( QtCore.Qt.LeftToolBarArea, self.toolbar )
         # Options
         self.toolbar.addAction( self.openFileAction )
         self.toolbar.addAction( self.saveFileAction )  
