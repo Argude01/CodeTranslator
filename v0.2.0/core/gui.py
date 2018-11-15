@@ -76,7 +76,7 @@ class Traductor( QtGui.QMainWindow ):
 
     # Conections
     def open(self):
-        self.filename = QtGui.QFileDialog.getOpenFileName( self, 'Open File', '.', '(*.txt)' )
+        self.filename = QtGui.QFileDialog.getOpenFileName( self, 'Open File', '.', '(*.*)' )
         
         if self.filename:
             with open( self.filename, 'r') as self.file:
