@@ -8,6 +8,8 @@ class VentanaOpcion(QtGui.QWidget):
 
     def initUI(self):
         self.setWindowTitle("Opciones")
+        self.setGeometry( 600, 400, 200, 200 )
+        self.show()
 
         # Crear layout vertical
         vbox = QtGui.QVBoxLayout(self)
