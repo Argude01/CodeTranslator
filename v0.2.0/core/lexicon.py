@@ -1,3 +1,4 @@
+import sys
 from plex import *
 
 letter = Range("AZaz")
@@ -28,32 +29,23 @@ lexicon = Lexicon([
     (space,             TEXT)
 ])
 
-file_dir = "files/function.js"
+file_dir = sys.argv[1] # from gui import self.filename
+#file_dir = 'files/function.js'
 f = open(file_dir, "r")
-
-print '--------- Lexicon ---------\n'
 scanner = Scanner(lexicon, f, file_dir)
-statements = []
-lexico_actions = []
-lexico_values = [] 
-lexico_patterns = []
-tokens = []
-chain = []
-descriptions = ''
+#tokens = []
+#descriptions = []
+#values = []
+#description_items = []
+#value_items = []
 while 1:
     token = scanner.read()
-    tokens.append(token)
-    print token
+    #tokens.append(token)
+    #value_items.append(token[1])
+    #description_items.append(token[0])
+    print token 
+    #if token[0] == '\n' or token[0] == 'None':
+    #    values.append(value_items)
+    #    descriptions.append(description_items)
     if token[0] is None:
         break
-
-print '\n--------- Syntax ---------\n'
-instructions = [line.rstrip('\n') for line in open(file_dir)]
-i=0
-for token in tokens:
-    descriptions += str(token[0]) 
-    if str(token[0]) == '\n':
-        statements.append(descriptions)
-        print instructions[i]      
-        print statements[len(statements)-1]  
-        descriptions = ''
