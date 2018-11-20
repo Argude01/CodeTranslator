@@ -34,17 +34,17 @@ class VentanaOpcion(QtGui.QWidget):
         # Lista de items
         self.ItemsCombox()
 
-        # Añadir los labels y los comboxes
+        # Aniadir los labels y los comboxes
         gbox.addWidget(self.labelOrigen, 0,0)
         gbox.addWidget(self.cbox_origen, 0,1)
         gbox.addWidget(self.labelDestino, 1,0)
         gbox.addWidget(self.cbox_destino, 1,1)
 
-        # Añadir los botones
+        # Aniadir los botones
         hbox.addWidget(self.btn_guardar)
         hbox.addWidget(self.btn_cancelar)
         
-        # Añadiendo los layouts
+        # Aniadiendo los layouts
         vbox.addLayout(gbox)
         vbox.addLayout(hbox)
 
