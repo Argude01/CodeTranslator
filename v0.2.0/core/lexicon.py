@@ -43,7 +43,7 @@ while 1:
     #tokens.append(token)
     #value_items.append(token[1])
     #description_items.append(token[0])
-    print token 
+    print (token) 
     #if token[0] == '\n' or token[0] == 'None':
     #    values.append(value_items)
     #    descriptions.append(description_items)
