@@ -85,11 +85,10 @@ class Traductor( QtGui.QMainWindow ):
         self.editor = QtGui.QTextEdit()
         self.setCentralWidget( self.editor )
         self.editor.setDocumentTitle( self.filename )
-
-        self.editor.setTextColor( QtGui.QColor( QtCore.Qt.blue ) )
-        self.editor.setStyleSheet('QTextEdit {color:red}')
-        self.editor.setFontItalic(False)
-        #self.editor.setText.bold()
+        self.editor.setStyleSheet('QTextEdit {color:black}')
+        self.editor.setFontItalic(False)    
+        # Text Editor Cursor
+        self.cursor = self.editor.textCursor()
 
     # Status Bar
         self.setStatusBar( QtGui.QStatusBar() )
@@ -127,9 +126,9 @@ class Traductor( QtGui.QMainWindow ):
     
     def validateLexicon(self):
         subprocess.call(['sh', 'intermediate.sh', 'python', 'lexicon.py', self.filename, 'lexicon.tmp'])
-        self.builtContainerFile()
+        self.builtContainerFileAndPatterns()
 
-    def builtContainerFile(self):
+    def builtContainerFileAndPatterns(self):
         tokens_tmp = [ token.rstrip('\n') for token in open('lexicon.tmp') ]
         self.tokens = []
         self.containerPatterns = []
@@ -162,7 +161,7 @@ class Traductor( QtGui.QMainWindow ):
                 value_items = ''
                 description_items = ''
                 i+=1
-
+    
         print '\nContainer File'
         print '-'*80
         for s in self.containerFile: print str(self.containerFile.index(s)) +'-> '+ s
@@ -171,35 +170,130 @@ class Traductor( QtGui.QMainWindow ):
         for d in self.containerPatterns: print str(self.containerPatterns.index(d)) +'-> '+ d      
         print '\n'*2
 
+    def getListKeywords(self):
+        self.listKeywords = []
+        for token in self.tokens:
+            if token[0]!=' ' and token[0]!='\\n' and token[0]!= 'None':
+                if not token[0] in self.listKeywords:             
+                    self.listKeywords.append( str(token[0]) )
+        return self.listKeywords
+    
+    def getFormatsColorHint(self):
+        # grouping characters
+        groupingCharactersFormat = QtGui.QTextCharFormat()
+        groupingCharactersFormat.setFontWeight( QtGui.QFont.Bold )
+        groupingCharactersFormat.setFontItalic( True )
+        # reserved words : function 
+        reswordFunctionFormat = QtGui.QTextCharFormat()
+        reswordFunctionFormat.setFontCapitalization( QtGui.QFont.AllLowercase )
+        reswordFunctionFormat.setForeground( QtGui.QColor( QtCore.Qt.green ) )
+        # reserved words : if 
+        reswordIfFormat = QtGui.QTextCharFormat()
+        reswordIfFormat.setFontCapitalization( QtGui.QFont.AllLowercase )
+        reswordIfFormat.setForeground( QtGui.QColor( QtCore.Qt.red ) )
+        # reserved words : return
+        reswordReturnFormat = QtGui.QTextCharFormat()
+        reswordReturnFormat.setFontCapitalization( QtGui.QFont.AllLowercase )
+        reswordReturnFormat.setForeground( QtGui.QColor( QtCore.Qt.red ) )
+        # reserved words : true / false
+        reswordBooleanFormat = QtGui.QTextCharFormat()
+        reswordBooleanFormat.setFontCapitalization( QtGui.QFont.AllLowercase )
+        reswordBooleanFormat.setForeground( QtGui.QColor( QtCore.Qt.magenta ) )
+        # User IDentificator
+        UIDFormat = QtGui.QTextCharFormat()
+        UIDFormat.setFontWeight( QtGui.QFont.DemiBold )
+        UIDFormat.setFontUnderline( True )
+        UIDFormat.setForeground( QtGui.QColor( QtCore.Qt.cyan ) )
+
+        self.dictFormats = { 'groupingCharacters': groupingCharactersFormat,
+                             'reswordFunction': reswordFunctionFormat,
+                             'reswordIf': reswordIfFormat,
+                             'reswordReturn': reswordReturnFormat,
+                             'reswordBoolean': reswordBooleanFormat,
+                             'UID': UIDFormat }
+
+        return self.dictFormats
+
+    def setGroupCharTokenFormat(self, pattern, textFormat):        
+        regex = QtCore.QRegExp(pattern)
+        pos = 0
+        index = regex.indexIn(self.editor.toPlainText(), pos)
+        while index != -1:
+            self.cursor.setPosition(index)
+            self.cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
+            print self.cursor.selectedText()
+            self.cursor.mergeCharFormat(textFormat)
+            pos = index + regex.matchedLength()
+            index = regex.indexIn(self.editor.toPlainText(), pos)
+    
     def colorHint(self):
+        listKeywords = self.getListKeywords()
+        print listKeywords
+        dictFormats = self.getFormatsColorHint()
+        for key in listKeywords:
+            if key=='(' or key==')' or key=='[' or key==']' or key=='{' or key=='}':
+                self.setGroupCharTokenFormat(key, dictFormats['groupingCharacters'])
+
+            if key=='function':
+                self.setGroupCharTokenFormat(key, dictFormats['reswordFunction'])
+
+            if key=='return':
+                self.setGroupCharTokenFormat(key, dictFormats['reswordReturn'])
+            
+            if key=='if':
+                self.setGroupCharTokenFormat(key, dictFormats['reswordIf'])
+
+            if key=='false' or key=='true':
+                self.setGroupCharTokenFormat(key, dictFormats['reswordBoolean'])  
+
+            if key=='UID':
+                self.setGroupCharTokenFormat(key, dictFormats['UID'])
+            
+    '''
+    def getTexteSelected(self):
         self.cursor = self.editor.textCursor()
+        self.cursor.setPosition(start)
+        self.cursos.setPosition(end, QtGui.QTextCursor.KeepAnchor)
         self.cursor.movePosition( QtGui.QTextCursor.StartOfLine )
+
+    def colorHint(self):
+        self.toUpperTokens()    
         
         for token in self.tokens:
             if token[0] == 'RESWORD':
                 word = token[1]
-                print '='*50
+                print '\n' + '='*100
                 print 'TOKEN[word]: ' + word             
-                for line in self.containerFile:
-                    position = 0
+                #for line in self.containerFile:
+                    # line.find(word)
                     start = 0
                     end = 0  
-                    while position > -1 and position < len(line):
-                        position = line.find(word)
+                    if line.find(word) > -1:                    
                         start = position
                         end = position + len(word)
-                        print '\n' + '_'*100
+                        print '_'*100
                         print 'current line: ' + line
-                        print '-'*80
-                        self.cursor.setPosition( position )
+                        print '-'*100
+                        self.cursor.setPosition( start )
+                        self.cursor.setPosition( end, QtGui.QTextCursor.KeepAnchor )
+                        self.editor.setTextCursor( self.cursor )
+                        if self.cursor.hasSelection():
+                            self.cursor.insertText(self.cursor.selectedText().toUpper())
+                        #currentSelection = self.cursor.selectedText()
+                        #editorSelection = self.editor.document().find( currentSelection )
+                        #editorSelectionFormat = editorSelection.charFormat()
+                        #editorSelection.setFontItalic(True)
+                        #editorSelectionFormat.setTextColor( QtGui.QColor( QtCore.Qt.black ) )
+                        #self.editor.setText( currentSelection )
+
+                        #self.cursor.selectedText().setTextColor( QtGui.QColor( QtCore.Qt.black ) )
                         print 'cursor position: ' + str(self.cursor.position())
                         print 'location word: ' + str(start) + ':' + str(end) + ' - ' + line[start:end]
-                        print '-'*80   
+                        print '-'*100   
                         line = line[end:len(line)]                  
                         print 'updated line: ' + line
 
                          
-            '''
             if token[0] == '(' or token[0] == ')' or token[0] == '{' or token[0] == '}' or token[0] == '[' or token[0] == ']':
                 word = token[1]
                 print 'word: ' + word             
@@ -219,7 +313,7 @@ class Traductor( QtGui.QMainWindow ):
                         print '-'*30  
                         self.cursor.setPosition(position, self.cursor.anchor())
                         self.cursor.selectedText().setFontItalic(True)
-            '''
+        '''
                     
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

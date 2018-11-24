@@ -16,7 +16,7 @@ close_bracket = Str("}")
 resword = Str("if", "then", "else", "end", "function", "true", "false", "return")
 
 lexicon = Lexicon([
-    (resword,           'RESWORD'),
+    (resword,           TEXT),
     (name,              'UID'),
     (number,            'int'),
     (operator,          TEXT),
