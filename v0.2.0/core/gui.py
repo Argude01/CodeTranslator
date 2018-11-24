@@ -166,6 +166,7 @@ class Traductor( QtGui.QMainWindow ):
         print ('\nContainer File')
         print ('-'*80)
         for s in self.containerFile: print (str(self.containerFile.index(s)) +'-> '+ s)
+        # print
         print ('\nContainer Patterns')
         print ('-'*80)
         for d in self.containerPatterns: print (str(self.containerPatterns.index(d)) +'-> '+ d)      
