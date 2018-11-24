@@ -163,13 +163,13 @@ class Traductor( QtGui.QMainWindow ):
                 description_items = ''
                 i+=1
 
-        print '\nContainer File'
-        print '-'*80
-        for s in self.containerFile: print str(self.containerFile.index(s)) +'-> '+ s
-        print '\nContainer Patterns'
-        print '-'*80
-        for d in self.containerPatterns: print str(self.containerPatterns.index(d)) +'-> '+ d      
-        print '\n'*2
+        print ('\nContainer File')
+        print ('-'*80)
+        for s in self.containerFile: print (str(self.containerFile.index(s)) +'-> '+ s)
+        print ('\nContainer Patterns')
+        print ('-'*80)
+        for d in self.containerPatterns: print (str(self.containerPatterns.index(d)) +'-> '+ d)      
+        print ('\n'*2)
 
     def colorHint(self):
         self.cursor = self.editor.textCursor()
@@ -178,8 +178,8 @@ class Traductor( QtGui.QMainWindow ):
         for token in self.tokens:
             if token[0] == 'RESWORD':
                 word = token[1]
-                print '='*50
-                print 'TOKEN[word]: ' + word             
+                print ('='*50)
+                print ('TOKEN[word]: ' + word)             
                 for line in self.containerFile:
                     position = 0
                     start = 0
@@ -188,15 +188,15 @@ class Traductor( QtGui.QMainWindow ):
                         position = line.find(word)
                         start = position
                         end = position + len(word)
-                        print '\n' + '_'*100
-                        print 'current line: ' + line
-                        print '-'*80
+                        print ('\n' + '_'*100)
+                        print ('current line: ' + line)
+                        print ('-'*80)
                         self.cursor.setPosition( position )
-                        print 'cursor position: ' + str(self.cursor.position())
-                        print 'location word: ' + str(start) + ':' + str(end) + ' - ' + line[start:end]
-                        print '-'*80   
+                        print ('cursor position: ' + str(self.cursor.position()))
+                        print ('location word: ' + str(start) + ':' + str(end) + ' - ' + line[start:end])
+                        print ('-'*80)   
                         line = line[end:len(line)]                  
-                        print 'updated line: ' + line
+                        print ('updated line: ' + line)
 
                          
             '''
